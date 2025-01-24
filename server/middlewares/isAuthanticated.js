@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.cookies.token;
-    console.log(req.cookies);
 
     if (!token) {
       return res.status(401).json({
@@ -13,10 +12,17 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     const decode = jwt.verify(token, process.env.SECRET_KEY);
-    req.id = decode.userId;
-    next();
+    if (!decode) {
+      return res.status(401).json({
+        message: "Invalid token",
+        success: false,
+      });
+      
+      req.id = decode.userId;
+      next();
+    }
   } catch (error) {
-    console.log("Authentication error:", error);
+    console.error("Authentication error:", error.message);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
