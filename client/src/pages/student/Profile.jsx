@@ -21,7 +21,7 @@ function Profile() {
   console.log(data);
 
   if (isLoading) return <h1>Profile Loading...</h1>;
-  const { user } = data;
+  const enrolledCourses = [1];
   return (
     <div className="max-w-4xl mx-auto px-4 my-10">
       <h1 className="font-bold text-2xl text-center md:text-left">PROFILE</h1>
@@ -29,7 +29,7 @@ function Profile() {
         <div className="flex flex-col items-center">
           <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
             <AvatarImage
-              src={user.photoUrl || "https://github.com/shadcn.png"}
+              // src={u-ser.photoUrl || "https://github.com/shadcn.png"}
               alt="@shadcn"
             />
             <AvatarFallback>CN</AvatarFallback>
@@ -40,7 +40,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
               Name:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                {user.name}
+                {/* {user.name} */}
               </span>
             </h1>
           </div>
@@ -48,7 +48,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
               Email:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                {user.email}
+                {/* {user.email} */}
               </span>
             </h1>
           </div>
@@ -56,7 +56,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
               Role:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                {user.role}
+                {/* {user.role} */}
               </span>
             </h1>
           </div>
