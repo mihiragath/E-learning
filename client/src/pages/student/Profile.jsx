@@ -14,17 +14,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import Course from "./Course";
+import { useLoadUserQuery } from "@/features/api/authApi";
 
 function Profile() {
-  const isLoading = true;
-  const enrolledCourses = [1];
+  const { data, isLoading } = useLoadUserQuery();
+  console.log(data);
+
+  if (isLoading) return <h1>Profile Loading...</h1>;
+  const { user } = data;
   return (
     <div className="max-w-4xl mx-auto px-4 my-10">
       <h1 className="font-bold text-2xl text-center md:text-left">PROFILE</h1>
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 my-5">
         <div className="flex flex-col items-center">
           <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage
+              src={user.photoUrl || "https://github.com/shadcn.png"}
+              alt="@shadcn"
+            />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
@@ -33,7 +40,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
               Name:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                Mihir Agath
+                {user.name}
               </span>
             </h1>
           </div>
@@ -41,7 +48,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
               Email:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                mihir@gmail.com
+                {user.email}
               </span>
             </h1>
           </div>
@@ -49,7 +56,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
               Role:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                Instructor
+                {user.role}
               </span>
             </h1>
           </div>

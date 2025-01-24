@@ -1,96 +1,109 @@
 import { User } from "../modals/user.modal.js";
 import bcrypt from "bcryptjs";
+import { generateToken } from "../utils/generateToken.js";
 
-const register = async (req, res) => {
+export const register = async (req, res) => {
   try {
-    console.log(req.body);
-
-    const { name, email, password } = req.body;
-
+    const { name, email, password } = req.body; // patel214
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "All fields are required.",
       });
     }
-
-    const userExists = await User.findOne({ email });
-    if (userExists) {
+    const user = await User.findOne({ email });
+    if (user) {
       return res.status(400).json({
         success: false,
-        message: "User already exists with that email",
+        message: "User already exist with this email.",
       });
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = await User.create({
+    await User.create({
       name,
       email,
       password: hashedPassword,
     });
-
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: "User registered successfully",
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-      },
+      message: "Account created successfully.",
     });
   } catch (error) {
-    console.error("Error during registration:", error.message);
-    res.status(500).json({
+    console.log(error);
+    return res.status(500).json({
       success: false,
-      message: "Failed to register user",
+      message: "Failed to register",
     });
   }
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email and password are required",
+        message: "All fields are required.",
       });
     }
-
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        message: "Invalid email or password",
+        message: "Incorrect email or password",
       });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({
         success: false,
-        message: "Invalid email or password",
+        message: "Incorrect email or password",
       });
     }
-
-    res.status(200).json({
-      success: true,
-      message: `Welcome back, ${user.name}!`,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
-    });
+    generateToken(res, user, `Welcome back ${user.name}`);
   } catch (error) {
-    console.error("Error during login:", error.message);
-    res.status(500).json({
+    console.log(error);
+    return res.status(500).json({
       success: false,
-      message: "Failed to login user",
+      message: "Failed to login",
     });
   }
 };
 
-export default { register, login };
+export const logout = async (_, res) => {
+  try {
+    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+      message: "Logged out successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to logout",
+    });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        message: "Profile not found",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to load user",
+    });
+  }
+};
