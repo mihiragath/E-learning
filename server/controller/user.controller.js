@@ -1,4 +1,4 @@
-import { User } from "../modals/user.modal.js";
+import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
 import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
@@ -89,9 +89,7 @@ export const logout = async (_, res) => {
 export const getUserProfile = async (req, res) => {
   try {
     const userId = req.id;
-    const user = await User.findById(userId)
-      .select("-password")
-      .populate("enrolledCourses");
+    const user = await User.findById(userId).select("-password");
     if (!user) {
       return res.status(404).json({
         message: "Profile not found",

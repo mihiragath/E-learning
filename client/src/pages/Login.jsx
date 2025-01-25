@@ -17,7 +17,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [signupInput, setSignupInput] = useState({
@@ -26,6 +26,8 @@ const Login = () => {
     password: "",
   });
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
+
+  const navigate = useNavigate();
 
   const [
     registerUser,
@@ -59,7 +61,7 @@ const Login = () => {
     const inputData = type === "signup" ? signupInput : loginInput;
     const action = type === "signup" ? registerUser : loginUser;
     try {
-      await action(inputData).unwrap(); // Ensures promise resolution
+      await action(inputData).unwrap();
     } catch (err) {
       console.error("Error during registration/login:", err);
     }
@@ -90,6 +92,7 @@ const Login = () => {
     registerData,
     loginError,
     registerError,
+    navigate,
   ]);
 
   return (
@@ -192,22 +195,19 @@ const Login = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Link>
-                <Button
-                  to="/"
-                  disabled={loginIsLoading}
-                  onClick={() => handleRegistration("login")}
-                >
-                  {loginIsLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
-                      wait
-                    </>
-                  ) : (
-                    "Login"
-                  )}
-                </Button>
-              </Link>
+              <Button
+                disabled={loginIsLoading}
+                onClick={() => handleRegistration("login")}
+              >
+                {loginIsLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
+                    wait
+                  </>
+                ) : (
+                  "Login"
+                )}
+              </Button>
             </CardFooter>
           </Card>
         </TabsContent>
