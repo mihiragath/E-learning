@@ -21,7 +21,8 @@ import {
 import {
   useEditCourseMutation,
   useGetCourseByIdQuery,
-} from "@/features/api/courseApi.js";
+  usePublishCourseMutation,
+} from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -45,6 +46,8 @@ const CourseTab = () => {
     isLoading: courseByIdLoading,
     refetch,
   } = useGetCourseByIdQuery(courseId);
+
+  const [publishCourse, {}] = usePublishCourseMutation();
 
   useEffect(() => {
     if (courseByIdData?.course) {
@@ -75,11 +78,10 @@ const CourseTab = () => {
   const selectCategory = (value) => {
     setInput({ ...input, category: value });
   };
-
   const selectCourseLevel = (value) => {
     setInput({ ...input, courseLevel: value });
   };
-
+  // get file
   const selectThumbnail = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -103,9 +105,21 @@ const CourseTab = () => {
     await editCourse({ formData, courseId });
   };
 
+  const publishStatusHandler = async (action) => {
+    try {
+      const response = await publishCourse({ courseId, query: action });
+      if (response.data) {
+        refetch();
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to publish or unpublish course");
+    }
+  };
+
   useEffect(() => {
     if (isSuccess) {
-      toast.success(data.message || "Course updated.");
+      toast.success(data.message || "Course update.");
     }
     if (error) {
       toast.error(error.data.message || "Failed to update course");
@@ -123,9 +137,20 @@ const CourseTab = () => {
             Make changes to your courses here. Click save when you're done.
           </CardDescription>
         </div>
-        <Button onClick={() => navigate("/admin/course")} variant="outline">
-          Remove Course
-        </Button>
+        <div className="space-x-2">
+          <Button
+            disabled={courseByIdData?.course.lectures.length === 0}
+            variant="outline"
+            onClick={() =>
+              publishStatusHandler(
+                courseByIdData?.course.isPublished ? "false" : "true"
+              )
+            }
+          >
+            {courseByIdData?.course.isPublished ? "Unpublished" : "Publish"}
+          </Button>
+          <Button>Remove Course</Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4 mt-5">
