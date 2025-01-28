@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useGetCreatorCoursesQuery } from "@/features/api/courseApi";
 import { Badge } from "@/components/ui/badge";
