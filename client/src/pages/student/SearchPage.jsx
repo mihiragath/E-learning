@@ -8,7 +8,6 @@ import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const SearchPage = () => {
-  
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query");
   const [selectedCategories, setSelectedCatgories] = useState([]);

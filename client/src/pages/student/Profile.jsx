@@ -36,6 +36,8 @@ const Profile = () => {
     },
   ] = useUpdateUserMutation();
 
+  console.log(data);
+
   const onChangeHandler = (e) => {
     const file = e.target.files?.[0];
     if (file) setProfilePhoto(file);
@@ -65,6 +67,8 @@ const Profile = () => {
   if (isLoading) return <h1>Profile Loading...</h1>;
 
   const user = data && data.user;
+
+  console.log(user);
 
   return (
     <div className="max-w-4xl mx-auto px-4 my-10">

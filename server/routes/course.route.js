@@ -1,4 +1,5 @@
 import express from "express";
+import isAuthenticated from "../middlewares/isAuthanticated.js";
 import {
   createCourse,
   createLecture,
@@ -8,43 +9,29 @@ import {
   getCourseLecture,
   getCreatorCourses,
   getLectureById,
-  removeLecture,
-  togglePublishCourse,
   getPublishedCourse,
+  removeLecture,
   searchCourse,
+  togglePublishCourse,
 } from "../controller/course.controller.js";
-import isAuthanticated from "../middlewares/isAuthanticated.js";
 import upload from "../utils/multer.js";
-
 const router = express.Router();
 
+router.route("/").post(isAuthenticated, createCourse);
+router.route("/search").get(isAuthenticated, searchCourse);
 router.route("/published-courses").get(getPublishedCourse);
-
-router
-  .route("/")
-  .post(isAuthanticated, createCourse)
-  .get(isAuthanticated, getCreatorCourses);
-
+router.route("/").get(isAuthenticated, getCreatorCourses);
 router
   .route("/:courseId")
-  .put(isAuthanticated, upload.single("courseThumbnail"), editCourse)
-  .get(isAuthanticated, getCourseById)
-  .patch(isAuthanticated, togglePublishCourse);
-
-// Lecture Routes
-router
-  .route("/:courseId/lecture")
-  .post(isAuthanticated, createLecture)
-  .get(isAuthanticated, getCourseLecture);
-
+  .put(isAuthenticated, upload.single("courseThumbnail"), editCourse);
+router.route("/:courseId").get(isAuthenticated, getCourseById);
+router.route("/:courseId/lecture").post(isAuthenticated, createLecture);
+router.route("/:courseId/lecture").get(isAuthenticated, getCourseLecture);
 router
   .route("/:courseId/lecture/:lectureId")
-  .post(isAuthanticated, editLecture);
+  .post(isAuthenticated, editLecture);
+router.route("/lecture/:lectureId").delete(isAuthenticated, removeLecture);
+router.route("/lecture/:lectureId").get(isAuthenticated, getLectureById);
+router.route("/:courseId").patch(isAuthenticated, togglePublishCourse);
 
-router
-  .route("/lecture/:lectureId")
-  .get(isAuthanticated, getLectureById)
-  .delete(isAuthanticated, removeLecture);
-
-router.route("/search").get(isAuthanticated, searchCourse);
 export default router;
