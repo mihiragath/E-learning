@@ -1,37 +1,44 @@
 import express from "express";
 import isAuthenticated from "../middlewares/isAuthanticated.js";
+import upload from "../utils/multer.js";
 import {
   createCourse,
-  createLecture,
-  editCourse,
-  editLecture,
-  getCourseById,
-  getCourseLecture,
-  getCreatorCourses,
-  getLectureById,
-  getPublishedCourse,
-  removeLecture,
+  removeCourse,
   searchCourse,
+  getPublishedCourse,
+  getCreatorCourses,
+  editCourse,
+  getCourseById,
+  createLecture,
+  getCourseLecture,
+  editLecture,
+  removeLecture,
+  getLectureById,
   togglePublishCourse,
 } from "../controller/course.controller.js";
-import upload from "../utils/multer.js";
+
 const router = express.Router();
 
-router.route("/").post(isAuthenticated, createCourse);
-router.route("/search").get(isAuthenticated, searchCourse);
-router.route("/published-courses").get(getPublishedCourse);
-router.route("/").get(isAuthenticated, getCreatorCourses);
-router
-  .route("/:courseId")
-  .put(isAuthenticated, upload.single("courseThumbnail"), editCourse);
-router.route("/:courseId").get(isAuthenticated, getCourseById);
-router.route("/:courseId/lecture").post(isAuthenticated, createLecture);
-router.route("/:courseId/lecture").get(isAuthenticated, getCourseLecture);
-router
-  .route("/:courseId/lecture/:lectureId")
-  .post(isAuthenticated, editLecture);
-router.route("/lecture/:lectureId").delete(isAuthenticated, removeLecture);
-router.route("/lecture/:lectureId").get(isAuthenticated, getLectureById);
-router.route("/:courseId").patch(isAuthenticated, togglePublishCourse);
+// Course Routes
+router.post("/", isAuthenticated, createCourse);
+router.get("/", isAuthenticated, getCreatorCourses);
+router.get("/search", isAuthenticated, searchCourse);
+router.get("/published-courses", getPublishedCourse);
+router.get("/:courseId", isAuthenticated, getCourseById);
+router.put(
+  "/:courseId",
+  isAuthenticated,
+  upload.single("courseThumbnail"),
+  editCourse
+);
+router.delete("/:courseId", isAuthenticated, removeCourse);
+router.patch("/:courseId", isAuthenticated, togglePublishCourse);
+
+// Lecture Routes
+router.post("/:courseId/lecture", isAuthenticated, createLecture);
+router.get("/:courseId/lecture", isAuthenticated, getCourseLecture);
+router.post("/:courseId/lecture/:lectureId", isAuthenticated, editLecture);
+router.get("/lecture/:lectureId", isAuthenticated, getLectureById);
+router.delete("/lecture/:lectureId", isAuthenticated, removeLecture);
 
 export default router;

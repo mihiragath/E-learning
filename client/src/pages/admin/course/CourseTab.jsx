@@ -22,6 +22,7 @@ import {
   useEditCourseMutation,
   useGetCourseByIdQuery,
   usePublishCourseMutation,
+  useRemoveCourseMutation,
 } from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -48,6 +49,7 @@ const CourseTab = () => {
   } = useGetCourseByIdQuery(courseId);
 
   const [publishCourse, {}] = usePublishCourseMutation();
+  const [removeCourse, { isLoading: isRemoving }] = useRemoveCourseMutation();
 
   useEffect(() => {
     if (courseByIdData?.course) {
@@ -105,6 +107,18 @@ const CourseTab = () => {
     await editCourse({ formData, courseId });
   };
 
+  const removeCourseHandler = async () => {
+    if (window.confirm("Are you sure you want to remove this course?")) {
+      try {
+        await removeCourse(courseId);
+        toast.success("Course removed successfully!");
+        navigate("/admin/course"); // Redirect after deletion
+      } catch (error) {
+        toast.error(error?.data?.message || "Failed to remove course");
+      }
+    }
+  };
+
   const publishStatusHandler = async (action) => {
     try {
       const response = await publishCourse({ courseId, query: action });
@@ -149,7 +163,20 @@ const CourseTab = () => {
           >
             {courseByIdData?.course.isPublished ? "Unpublished" : "Publish"}
           </Button>
-          <Button>Remove Course</Button>
+          <Button
+            variant="destructive"
+            disabled={isRemoving}
+            onClick={removeCourseHandler}
+          >
+            {isRemoving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Removing...
+              </>
+            ) : (
+              "Remove Course"
+            )}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>

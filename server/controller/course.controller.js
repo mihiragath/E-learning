@@ -33,6 +33,43 @@ export const createCourse = async (req, res) => {
   }
 };
 
+export const removeCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    if (!courseId) {
+      return res.status(400).json({
+        message: "Course ID is required.",
+      });
+    }
+
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found.",
+      });
+    }
+
+    if (course.creator.toString() !== req.id) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this course.",
+      });
+    }
+
+    await Course.findByIdAndDelete(courseId);
+
+    return res.status(200).json({
+      message: "Course removed successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed to remove course",
+    });
+  }
+};
+
 export const searchCourse = async (req, res) => {
   try {
     const { query = "", categories = [], sortByPrice = "" } = req.query;
