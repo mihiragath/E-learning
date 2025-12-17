@@ -137,7 +137,6 @@ Frontend
 npm start
 
 📸 Screenshots
-![E11](https://github.com/user-attachments/assets/089d42a3-f8c1-4665-ac2b-3fb8e991ad33)
 
 
 🎯 What I Learned
