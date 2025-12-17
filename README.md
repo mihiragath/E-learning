@@ -138,8 +138,6 @@ npm start
 
 📸 Screenshots
 
-![alt text](E11.jpeg) ![alt text](E2.jpeg) ![alt text](E3.jpeg) ![alt text](E4.jpeg) ![alt text](E5.jpeg) ![alt text](E6.jpeg) ![alt text](E7.jpeg) ![alt text](E8.jpeg) ![alt text](E9.jpeg) ![alt text](E10.jpeg)
-```
 
 🎯 What I Learned
 
