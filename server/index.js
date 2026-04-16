@@ -2,9 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
 import connectDB from "./database/dbConnect.js";
-
 import userRouter from "./routes/user.route.js";
 import courseRoute from "./routes/course.route.js";
 import mediaRoute from "./routes/media.route.js";
@@ -32,10 +30,9 @@ app.use(
         return callback(null, true);
       }
 
-      return callback(new Error("CORS Not Allowed"));
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   }),
 );
 
@@ -48,13 +45,6 @@ app.use("/api/v1/course", courseRoute);
 app.use("/api/v1/purchase", purchaseRoute);
 app.use("/api/v1/progress", CourseProgress);
 
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "API is running successfully",
-  });
-});
-
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server listening at port ${PORT}`);
 });
