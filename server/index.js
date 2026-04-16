@@ -26,13 +26,16 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
+
+      return callback(new Error("CORS Not Allowed"));
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   }),
 );
 
@@ -46,9 +49,12 @@ app.use("/api/v1/purchase", purchaseRoute);
 app.use("/api/v1/progress", CourseProgress);
 
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.status(200).json({
+    success: true,
+    message: "API is running successfully",
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server listening at port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
