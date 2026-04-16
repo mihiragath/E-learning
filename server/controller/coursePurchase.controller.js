@@ -180,3 +180,106 @@ export const getAllPurchasedCourse = async (_, res) => {
     console.log(error);
   }
 };
+
+export const getMyLearningCourses = async (req, res) => {
+  try {
+    const userId = req.id;
+    const purchasedCourse = await CoursePurchase.find({
+      userId,
+      status: "completed",
+    }).populate({
+      path: "courseId",
+      populate: {
+        path: "creator",
+        select: "name photoUrl",
+      },
+    });
+
+    const courses = purchasedCourse
+      .map((purchase) => purchase.courseId)
+      .filter(Boolean);
+
+    return res.status(200).json({
+      success: true,
+      courses,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to load purchased courses",
+    });
+  }
+};
+
+export const getInstructorDashboardData = async (req, res) => {
+  try {
+    const instructorId = req.id;
+
+    const courses = await Course.find({ creator: instructorId }).select(
+      "_id courseTitle"
+    );
+
+    if (!courses.length) {
+      return res.status(200).json({
+        success: true,
+        dashboard: {
+          totalCourses: 0,
+          totalSales: 0,
+          totalRevenue: 0,
+          coursePerformance: [],
+        },
+      });
+    }
+
+    const courseIds = courses.map((course) => course._id);
+    const completedPurchases = await CoursePurchase.find({
+      courseId: { $in: courseIds },
+      status: "completed",
+    }).lean();
+
+    const performanceMap = new Map(
+      courses.map((course) => [
+        course._id.toString(),
+        {
+          courseId: course._id,
+          courseTitle: course.courseTitle,
+          salesCount: 0,
+          revenue: 0,
+        },
+      ])
+    );
+
+    let totalRevenue = 0;
+    for (const purchase of completedPurchases) {
+      const courseKey = purchase.courseId.toString();
+      const courseStats = performanceMap.get(courseKey);
+
+      if (!courseStats) continue;
+
+      courseStats.salesCount += 1;
+      courseStats.revenue += purchase.amount || 0;
+      totalRevenue += purchase.amount || 0;
+    }
+
+    const coursePerformance = Array.from(performanceMap.values()).sort(
+      (a, b) => b.revenue - a.revenue
+    );
+
+    return res.status(200).json({
+      success: true,
+      dashboard: {
+        totalCourses: courses.length,
+        totalSales: completedPurchases.length,
+        totalRevenue,
+        coursePerformance,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to load dashboard data",
+    });
+  }
+};

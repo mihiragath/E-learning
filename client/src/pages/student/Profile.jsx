@@ -22,7 +22,7 @@ import { toast } from "sonner";
 
 const Profile = () => {
   const [name, setName] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState(null);
 
   const { data, isLoading, refetch } = useLoadUserQuery();
   const [
@@ -41,12 +41,13 @@ const Profile = () => {
   const onChangeHandler = (e) => {
     const file = e.target.files?.[0];
     if (file) setProfilePhoto(file);
+    else setProfilePhoto(null);
   };
 
   const updateUserHandler = async () => {
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("profilePhoto", profilePhoto);
+    if (profilePhoto) formData.append("profilePhoto", profilePhoto);
     await updateUser(formData);
   };
 

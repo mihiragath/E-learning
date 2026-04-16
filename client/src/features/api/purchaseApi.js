@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const COURSE_PURCHASE_API =
-  "https://e-learning-backend-p2yp.onrender.com/api/v1/purchase";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api/v1";
+const COURSE_PURCHASE_API = `${API_BASE_URL}/purchase`;
 
 export const purchaseApi = createApi({
   reducerPath: "purchaseApi",
@@ -29,11 +30,25 @@ export const purchaseApi = createApi({
         method: "GET",
       }),
     }),
+    getMyLearningCourses: builder.query({
+      query: () => ({
+        url: "/my-learning",
+        method: "GET",
+      }),
+    }),
+    getDashboardStats: builder.query({
+      query: () => ({
+        url: "/dashboard",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
 export const {
   useCreateCheckoutSessionMutation,
   useGetCourseDetailWithStatusQuery,
+  useGetDashboardStatsQuery,
+  useGetMyLearningCoursesQuery,
   useGetPurchasedCoursesQuery,
 } = purchaseApi;

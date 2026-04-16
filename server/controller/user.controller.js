@@ -123,17 +123,24 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
-    // extract public id of the old image from the url is it exists;
-    if (user.photoUrl) {
-      const publicId = user.photoUrl.split("/").pop().split(".")[0]; // extract public id
-      deleteMediaFromCloudinary(publicId);
+
+    // If a new photo was uploaded, replace the old one.
+    // When `req.file` is missing, keep the existing `photoUrl`.
+    let photoUrl;
+    if (profilePhoto) {
+      // Upload new photo
+      const cloudResponse = await uploadMedia(profilePhoto.path);
+      photoUrl = cloudResponse?.secure_url;
+
+      // Only delete the old photo if we successfully uploaded the new one.
+      if (photoUrl && user.photoUrl) {
+        const publicId = user.photoUrl.split("/").pop().split(".")[0]; // extract public id
+        deleteMediaFromCloudinary(publicId);
+      }
     }
 
-    // upload new photo
-    const cloudResponse = await uploadMedia(profilePhoto.path);
-    const photoUrl = cloudResponse.secure_url;
-
-    const updatedData = { name, photoUrl };
+    const updatedData = { name };
+    if (photoUrl) updatedData.photoUrl = photoUrl;
     const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
       new: true,
     }).select("-password");

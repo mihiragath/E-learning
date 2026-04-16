@@ -4,6 +4,8 @@ import {
   createCheckoutSession,
   getAllPurchasedCourse,
   getCourseDetailWithPurchaseStatus,
+  getInstructorDashboardData,
+  getMyLearningCourses,
   stripeWebhook,
 } from "../controller/coursePurchase.controller.js";
 
@@ -19,6 +21,8 @@ router
   .route("/course/:courseId/detail-with-status")
   .get(isAuthenticated, getCourseDetailWithPurchaseStatus);
 
+router.route("/my-learning").get(isAuthenticated, getMyLearningCourses);
+router.route("/dashboard").get(isAuthenticated, getInstructorDashboardData);
 router.route("/").get(isAuthenticated, getAllPurchasedCourse);
 
 export default router;
