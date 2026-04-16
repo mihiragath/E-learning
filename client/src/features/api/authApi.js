@@ -2,7 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { userLoggedIn, userLoggedOut } from "../authSlice";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api/v1";
+  "https://e-learning-backend-p2yp.onrender.com/api/v1" ||
+  "http://localhost:8080/api/v1";
 const USER_API = `${API_BASE_URL}/user/`;
 
 export const authApi = createApi({
