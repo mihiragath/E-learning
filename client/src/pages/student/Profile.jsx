@@ -18,6 +18,7 @@ import {
   useLoadUserQuery,
   useUpdateUserMutation,
 } from "@/features/api/authApi";
+import { useGetMyLearningCoursesQuery } from "@/features/api/purchaseApi";
 import { toast } from "sonner";
 
 const Profile = () => {
@@ -25,6 +26,11 @@ const Profile = () => {
   const [profilePhoto, setProfilePhoto] = useState(null);
 
   const { data, isLoading, refetch } = useLoadUserQuery();
+  const {
+    data: myLearningData,
+    isLoading: myLearningLoading,
+    isError: myLearningError,
+  } = useGetMyLearningCoursesQuery();
   const [
     updateUser,
     {
@@ -67,7 +73,8 @@ const Profile = () => {
 
   if (isLoading) return <h1>Profile Loading...</h1>;
 
-  const user = data && data.user;
+  const user = data?.user;
+  const enrolledCourses = myLearningData?.courses || [];
 
   console.log(user);
 
@@ -164,12 +171,18 @@ const Profile = () => {
         </div>
       </div>
       <div>
-        <h1 className="font-medium text-lg">Courses you're enrolled in</h1>
+        <h1 className="font-medium text-lg">
+          Courses you're enrolled in ({enrolledCourses.length})
+        </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">
-          {user.enrolledCourses.length === 0 ? (
-            <h1>You haven't enrolled yet</h1>
+          {myLearningLoading ? (
+            <h1>Loading enrolled courses...</h1>
+          ) : myLearningError ? (
+            <h1>Failed to load enrolled courses.</h1>
+          ) : enrolledCourses.length === 0 ? (
+            <h1>You have not purchased any course yet.</h1>
           ) : (
-            user.enrolledCourses.map((course) => (
+            enrolledCourses.map((course) => (
               <Course course={course} key={course._id} />
             ))
           )}

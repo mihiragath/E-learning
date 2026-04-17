@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { useGetCourseDetailWithStatusQuery } from "@/features/api/purchaseApi";
 import { BadgeInfo, Lock, PlayCircle } from "lucide-react";
 import React from "react";
-import ReactPlayer from "react-player";
+import ReactPlayer from "react-player/lazy";
 import { useNavigate, useParams } from "react-router-dom";
 
 const CourseDetail = () => {
@@ -23,10 +23,9 @@ const CourseDetail = () => {
     useGetCourseDetailWithStatusQuery(courseId);
 
   if (isLoading) return <h1>Loading...</h1>;
-  if (isError) return <h>Failed to load course details</h>;
+  if (isError) return <h1>Failed to load course details</h1>;
 
-  const { course, purchased } = data;
-  console.log(purchased);
+  const { course, purchased, enrolledStudentsCount } = data;
 
   const handleContinueCourse = () => {
     if (purchased) {
@@ -52,7 +51,7 @@ const CourseDetail = () => {
             <BadgeInfo size={16} />
             <p>Last updated {course?.createdAt.split("T")[0]}</p>
           </div>
-          <p>Students enrolled: {course?.enrolledStudents.length}</p>
+          {/* <p>Students enrolled: {enrolledStudentsCount ?? 0}</p> */}
         </div>
       </div>
       <div className="max-w-7xl mx-auto my-5 px-4 md:px-8 flex flex-col lg:flex-row justify-between gap-10">
@@ -65,7 +64,7 @@ const CourseDetail = () => {
           <Card>
             <CardHeader>
               <CardTitle>Course Content</CardTitle>
-              <CardDescription>4 lectures</CardDescription>
+              <CardDescription>{course?.lectures?.length || 0} lectures</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {course.lectures.map((lecture, idx) => (
@@ -86,7 +85,7 @@ const CourseDetail = () => {
                 <ReactPlayer
                   width="100%"
                   height={"100%"}
-                  url={course.lectures[0].videoUrl}
+                  url={course?.lectures?.[0]?.videoUrl}
                   controls={true}
                 />
               </div>

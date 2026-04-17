@@ -8,7 +8,15 @@ const MyLearning = () => {
   const myLearning = data?.courses || [];
   return (
     <div className="max-w-4xl mx-auto my-10 px-4 md:px-0">
-      <h1 className="font-bold text-2xl">MY LEARNING</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-bold text-2xl">MY LEARNING</h1>
+        {!isLoading && !isError && (
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Purchased courses:{" "}
+            <span className="font-semibold">{myLearning.length}</span>
+          </p>
+        )}
+      </div>
       <div className="my-5">
         {isLoading ? (
           <MyLearningSkeleton />
