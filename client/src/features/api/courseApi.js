@@ -2,8 +2,8 @@ import CreateLecture from "@/pages/admin/lecture/CreateLecture";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const API_BASE_URL =
-  "https://e-learning-backend-p2yp.onrender.com/api/v1" ||
-  "http://localhost:8080/api/v1";
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://e-learning-backend-p2yp.onrender.com/api/v1";
 const COURSE_API = `${API_BASE_URL}/course`;
 
 export const courseApi = createApi({

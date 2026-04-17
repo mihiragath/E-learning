@@ -16,17 +16,19 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const allowedOrigins = [
+const allowedOrigins = new Set([
   "http://localhost:5173",
   "https://mihir-elearning-platform.vercel.app",
-];
+  ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
+]);
 
 app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
+      const isVercelPreview = origin.endsWith(".vercel.app");
+      if (allowedOrigins.has(origin) || isVercelPreview) {
         return callback(null, true);
       }
 

@@ -5,6 +5,8 @@ import { Lecture } from "../models/lecture.model.js";
 import { User } from "../models/user.model.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const CLIENT_URL =
+  process.env.CLIENT_URL || "https://mihir-elearning-platform.vercel.app";
 
 export const createCheckoutSession = async (req, res) => {
   try {
@@ -39,8 +41,8 @@ export const createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:5173/course-progress/${courseId}`, // once payment successful redirect to course progress page
-      cancel_url: `http://localhost:5173/course-detail/${courseId}`,
+      success_url: `${CLIENT_URL}/course-progress/${courseId}`, // once payment successful redirect to course progress page
+      cancel_url: `${CLIENT_URL}/course-detail/${courseId}`,
       metadata: {
         courseId: courseId,
         userId: userId,
