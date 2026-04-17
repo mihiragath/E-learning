@@ -1,5 +1,7 @@
 # 🎓 MERN E-Learning Platform
 
+live: https://mihir-elearning-platform.vercel.app/
+
 A **responsive E-Learning web application** built using the **MERN Stack**, designed to provide a seamless learning experience for students and powerful course management tools for admins.
 
 ---
