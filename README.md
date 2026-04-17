@@ -2,6 +2,8 @@
 
 live: https://mihir-elearning-platform.vercel.app/
 
+Backend live(render): https://e-learning-backend-p2yp.onrender.com
+
 A **responsive E-Learning web application** built using the **MERN Stack**, designed to provide a seamless learning experience for students and powerful course management tools for admins.
 
 ---
